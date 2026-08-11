@@ -13,7 +13,7 @@ export default function Hero() {
       <div className="container grid min-h-[680px] items-center gap-12 py-20 lg:grid-cols-[1.05fr_.95fr]">
         <div>
           <p className="eyebrow">{t("eyebrow")}</p>
-          <h1 className="mt-4 max-w-3xl text-5xl font-black leading-[1.02] tracking-[-.065em] sm:text-6xl lg:text-7xl">
+          <h1 className="mt-4 max-w-2xl text-3xl font-black leading-[1.02] tracking-[-.065em] sm:text-3xl lg:text-6xl">
             <span className="inline-block text-[0.94em] leading-none">{t("titleA")}</span>{" "}
             <span className="inline-block text-blue-500 text-[1.02em] leading-none">{t("titleB")}</span>
             <br />
