@@ -1,26 +1,126 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink: #13263f;
+  --muted: #5c6d82;
+  --line: #dfe7ef;
+  --surface: #f5f8fc;
+  --card: #fff;
+  --brand: #2563eb;
+  --brand-deep: #142d75;
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-cairo), Arial, sans-serif;
+}
+.site-shell {
+  min-height: 100vh;
+  background: var(--surface);
+  color: var(--ink);
+  transition:
+    background 0.25s,
+    color 0.25s;
+}
+.site-shell.dark {
+  --ink: #eef5ff;
+  --muted: #a7b6c9;
+  --line: rgba(176, 203, 237, 0.16);
+  --surface: #081321;
+  --card: #0e2036;
+  --brand: #60a5fa;
+  --brand-deep: #92c5ff;
+}
+.container {
+  width: min(1160px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+.eyebrow {
+  color: var(--brand);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.section-heading {
+  max-width: 610px;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  margin: 0.65rem 0 1rem;
+}
+.section-copy {
+  max-width: 600px;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+.button-primary,
+.button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border-radius: 999px;
+  padding: 0.85rem 1.25rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    background 0.2s;
+}
+.button-primary {
+  background: var(--brand);
+  color: white;
+  box-shadow: 0 15px 32px color-mix(in srgb, var(--brand) 25%, transparent);
+}
+.button-secondary {
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--card) 75%, transparent);
+}
+.button-primary:hover,
+.button-secondary:hover {
+  transform: translateY(-2px);
+}
+.grid-pattern {
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--line) 70%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--line) 70%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 40px 40px;
+}
+.marquee-track {
+  width: max-content;
+  animation: scroll 27s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+@keyframes scroll {
+  to {
+    transform: translateX(-50%);
   }
 }
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
