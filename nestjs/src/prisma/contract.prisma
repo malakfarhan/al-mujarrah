@@ -1,0 +1,323 @@
+// use prisma-next
+
+model Lead {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String?
+  company   String?
+  service   String?
+  budget    String?
+  message   String?
+  status    String   @default("new")
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  quotations Quotation[]
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  isActive     Boolean  @default(true)
+  lastLoginAt  TimestamptzString?
+  createdAt    TimestamptzString @default(now())
+  updatedAt    temporal.updatedAtString()
+
+  roles AdminRole[]
+   activityLogs ActivityLog[]
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  admins      AdminRole[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  roles RolePermission[]
+}
+
+model AdminRole {
+  adminId   Int
+  roleId    Int
+  createdAt TimestamptzString @default(now())
+
+  admin Admin @relation(fields: [adminId], references: [id])
+  role  Role  @relation(fields: [roleId], references: [id])
+
+  @@id([adminId, roleId])
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  createdAt    TimestamptzString @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id])
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+}
+
+model Quotation {
+  id          Int    @id @default(autoincrement())
+  quotationNo String @unique
+  leadId      Int?
+
+  // Customer
+  customerName   String
+  customerNameAr String?
+  customerEmail  String?
+
+  company   String?
+  companyAr String?
+
+  // Quotation content
+  title   String
+  titleAr String?
+
+  description   String?
+  descriptionAr String?
+
+  currency String @default("SAR")
+
+  // Pricing
+  subtotal Float @default(0)
+
+  // Discount percentage
+  discountRate Float @default(0)
+
+  // Calculated discount value
+  discountAmount Float @default(0)
+
+  // VAT percentage
+  taxRate Float @default(0)
+
+  // Calculated VAT value
+  taxAmount Float @default(0)
+
+  // Final payable amount
+  totalAmount Float @default(0)
+
+  status     String @default("draft")
+  validUntil TimestamptzString?
+
+  notes   String?
+  notesAr String?
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  lead  Lead?           @relation(fields: [leadId], references: [id])
+  items QuotationItem[]
+
+  project Project?
+}
+
+model QuotationItem {
+  id          Int @id @default(autoincrement())
+  quotationId Int
+
+  // English + Arabic item description
+  description   String
+  descriptionAr String?
+
+  quantity  Float @default(1)
+  unitPrice Float
+  amount    Float
+
+  createdAt TimestamptzString @default(now())
+
+  quotation Quotation @relation(fields: [quotationId], references: [id])
+}
+
+model Project {
+  id          Int    @id @default(autoincrement())
+  projectNo   String @unique
+  quotationId Int?   @unique
+
+  // Client
+  clientName   String
+  clientNameAr String?
+
+  company   String?
+  companyAr String?
+
+  // Project content
+  title   String
+  titleAr String?
+
+  description   String?
+  descriptionAr String?
+
+  // Machine values stay in English
+  status   String @default("planning")
+  priority String @default("medium")
+  progress Int    @default(0)
+
+  budget   Float  @default(0)
+  currency String @default("SAR")
+
+  startDate TimestamptzString?
+  dueDate   TimestamptzString?
+
+  notes   String?
+  notesAr String?
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  quotation Quotation? @relation(fields: [quotationId], references: [id])
+}
+
+model Portfolio {
+  id Int @id @default(autoincrement())
+
+  // English + Arabic title
+  title   String
+  titleAr String?
+
+  // Shared URL slug
+  slug String @unique
+
+  // English + Arabic descriptions
+  shortDescription   String?
+  shortDescriptionAr String?
+
+  content   String?
+  contentAr String?
+
+  // Client
+  client   String?
+  clientAr String?
+
+  // Industry
+  industry   String?
+  industryAr String?
+
+  // Service
+  service   String?
+  serviceAr String?
+
+  // Technologies
+  technologies   String?
+  technologiesAr String?
+
+  // Shared media
+  coverImage String?
+
+  isFeatured  Boolean @default(false)
+  isPublished Boolean @default(false)
+  sortOrder   Int     @default(0)
+
+  // SEO English + Arabic
+  metaTitle   String?
+  metaTitleAr String?
+
+  metaDescription   String?
+  metaDescriptionAr String?
+
+  publishedAt TimestamptzString?
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  images PortfolioImage[]
+}
+
+model PortfolioImage {
+  id          Int @id @default(autoincrement())
+  portfolioId Int
+
+  imageUrl String
+
+  // Gallery caption English + Arabic
+  caption   String?
+  captionAr String?
+
+  sortOrder Int @default(0)
+  createdAt TimestamptzString @default(now())
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id])
+}
+
+model Blog {
+  id Int @id @default(autoincrement())
+
+  // English + Arabic title
+  title   String
+  titleAr String?
+
+  // Shared URL slug
+  slug String @unique
+
+  // English + Arabic summary
+  excerpt   String?
+  excerptAr String?
+
+  // English + Arabic article content
+  content   String?
+  contentAr String?
+
+  // English + Arabic category
+  category   String?
+  categoryAr String?
+
+  // Shared media
+  coverImage String?
+
+  // Publishing
+  isFeatured  Boolean @default(false)
+  isPublished Boolean @default(false)
+
+  // SEO English + Arabic
+  metaTitle   String?
+  metaTitleAr String?
+
+  metaDescription   String?
+  metaDescriptionAr String?
+
+  publishedAt TimestamptzString?
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+}
+
+model ActivityLog {
+  id Int @id @default(autoincrement())
+
+  // Admin who performed the action
+  adminId Int?
+
+  // Machine values: created, updated, deleted, login, status_changed
+  action String
+
+  // Machine values: lead, quotation, project, portfolio, blog, admin, role
+  entityType String
+
+  // Related record id when available
+  entityId Int?
+
+  // Display labels in both languages
+  entityLabel   String?
+  entityLabelAr String?
+
+  // Optional request information
+  ipAddress String?
+
+  createdAt TimestamptzString @default(now())
+
+  admin Admin? @relation(fields: [adminId], references: [id])
+}
